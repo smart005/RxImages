@@ -1,0 +1,21 @@
+buildscript {
+    repositories {
+        maven { url 'http://mv.slcore.com:81/content/groups/cloud-group/' }
+        maven { url 'http://192.168.200.156:8081/repository/group-android/' }
+        google()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:3.4.1'
+    }
+}
+
+allprojects {
+    repositories {
+        maven { url 'http://mv.slcore.com:81/content/groups/cloud-group/' }
+        maven { url 'http://192.168.200.156:8081/repository/group-android/' }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
