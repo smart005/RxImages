@@ -19,8 +19,8 @@
 
             <ImageView
                 android:id="@+id/test_iv0"
-                android:layout_width="@dimen/spacing_300"
-                android:layout_height="@dimen/spacing_200"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal" />
 
             <ImageView

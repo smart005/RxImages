@@ -2,16 +2,22 @@ package com.cloud.imagestest;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.View;
 
+import com.cloud.imagestest.databinding.ActivityMainBinding;
 import com.cloud.imagestest.images.ImagesActivity;
 
 public class MainActivity extends Activity {
+
+    private ActivityMainBinding binding;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        binding.setHandler(this);
     }
 
     public void OnImageFunctionClick(View view) {

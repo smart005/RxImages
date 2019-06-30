@@ -386,13 +386,13 @@ class ImageBuildOptimize {
          * DiskCacheStrategy.RESOURCE 在资源解码后将数据写入磁盘缓存，即经过缩放等转换后的图片资源。
          * DiskCacheStrategy.AUTOMATIC 根据原始图片数据和资源编码策略来自动选择磁盘缓存策略。
          */
-        RequestOptions options = new RequestOptions();
+        RequestOptions options = new RequestOptions().autoClone();
         options.placeholder(this.placeholder)
+                .dontAnimate()
                 .priority(priority)
                 //请求超时时间
                 .timeout(3000)
-                //内存缓存
-                .skipMemoryCache(false);
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
         if (scaleType == ScaleType.centerCrop) {
             options = options.centerCrop();
         } else if (scaleType == ScaleType.centerInside) {
