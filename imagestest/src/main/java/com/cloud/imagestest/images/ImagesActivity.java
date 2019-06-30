@@ -2,16 +2,20 @@ package com.cloud.imagestest.images;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
+import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.cloud.images.RxImage;
 import com.cloud.images.beans.SelectImageProperties;
 import com.cloud.images.enums.CacheMode;
 import com.cloud.images.enums.ScaleType;
 import com.cloud.images.figureset.ImageSelectDialog;
+import com.cloud.images.glide.GBitmapCallback;
+import com.cloud.images.glide.GFileCallback;
 import com.cloud.images.glide.GlideOptimize;
 import com.cloud.imagestest.R;
 import com.cloud.imagestest.databinding.ImagesViewBinding;
@@ -53,8 +57,8 @@ public class ImagesActivity extends FragmentActivity {
         GlideOptimize.with(this)
                 .load(url3)
                 //可自定义宽度和高度，不设置默认取控件的宽高;
-                //.setWidth(100)
-                //.setHeight(200)
+//                .setWidth(100)
+//                .setHeight(200)
                 //glide图片加载完成之前的占位图片
                 //未设置时取RxImage.setDefImage()设置的默认图片
                 //.setPlaceholder(R.drawable.def_image)
@@ -66,7 +70,7 @@ public class ImagesActivity extends FragmentActivity {
                 //先加载相对于原图的缩放比例(按宽高比)的缩略图
                 .setThumbnailScale(0.5f)
                 //具体说明看{@link ScaleType}
-                .setScaleType(ScaleType.centerCrop)
+                .setScaleType(ScaleType.fitCenter)
                 //图片圆角弧度(由第三方规则处理)
                 .setRoundCorners(20)
                 //图片规则(根据第三方文档设定,如阿里、七牛)
@@ -79,26 +83,26 @@ public class ImagesActivity extends FragmentActivity {
                 //.asGif()
                 .into(binding.testIv0);
 
-//        //所有的参数配置与上面一样
-//        GlideOptimize.with(this)
-//                .load(url2)
-//                .into(new GBitmapCallback() {
-//                    @Override
-//                    public void call(Bitmap bitmap) {
-//                        binding.testIv1.setImageBitmap(bitmap);
-//                    }
-//                });
+        //所有的参数配置与上面一样
+        GlideOptimize.with(this)
+                .load(url2)
+                .into(new GBitmapCallback() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        binding.testIv1.setImageBitmap(bitmap);
+                    }
+                });
         //文件类型
-//        GlideOptimize.with(this)
-//                .load(url)
-//                //将文件移动至此目录下,如果不设置则为glide缓存默认路径
-//                .toMove(DirectoryNames.forum.name())
-//                .into(new GFileCallback<File>() {
-//                    @Override
-//                    public void call(File file) {
-//                        //这里做移动文件、加载等操作
-//                    }
-//                });
+        GlideOptimize.with(this)
+                .load(url)
+                //将文件移动至此目录下,如果不设置则为glide缓存默认路径
+                .toMove(DirectoryNames.forum.name())
+                .into(new GFileCallback<File>() {
+                    @Override
+                    public void call(File file) {
+                        //这里做移动文件、加载等操作
+                    }
+                });
     }
 
     //图片选择

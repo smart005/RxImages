@@ -44,7 +44,7 @@ class ImageBuildOptimize {
     //设备密度
     private float density = 0;
     //设置的图片的scaleType类型
-    private ScaleType scaleType = ScaleType.centerCrop;
+    private ScaleType scaleType = null;
     //第三方跟在图片后面的规则
     private String imageRule = "";
     //图片圆角(由第三方规则处理)
@@ -386,13 +386,13 @@ class ImageBuildOptimize {
          * DiskCacheStrategy.RESOURCE 在资源解码后将数据写入磁盘缓存，即经过缩放等转换后的图片资源。
          * DiskCacheStrategy.AUTOMATIC 根据原始图片数据和资源编码策略来自动选择磁盘缓存策略。
          */
-        RequestOptions options = new RequestOptions().autoClone();
+        RequestOptions options = new RequestOptions();
         options.placeholder(this.placeholder)
-                .dontAnimate()
                 .priority(priority)
                 //请求超时时间
                 .timeout(3000)
-                .diskCacheStrategy(DiskCacheStrategy.ALL);
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+        ;
         if (scaleType == ScaleType.centerCrop) {
             options = options.centerCrop();
         } else if (scaleType == ScaleType.centerInside) {
@@ -422,7 +422,7 @@ class ImageBuildOptimize {
             //对于本地图片需要先压缩则处理
             options = options.transform(new GlideCircleTransform());
         }
-        RequestBuilder builder = (RequestBuilder) requestBuilder.apply(options);
+        RequestBuilder builder = requestBuilder.apply(options);
         //缩略图相对于原图的比例
         builder = builder.thumbnail(thumbnailScale);
         return builder;

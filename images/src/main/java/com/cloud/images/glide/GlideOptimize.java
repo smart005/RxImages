@@ -107,25 +107,24 @@ public class GlideOptimize {
         if (TextUtils.isEmpty(originalUrl)) {
             return null;
         }
-//        PathCacheDataEntry pathCacheDataEntry = new PathCacheDataEntry();
-//        PathCacheInfoItem pathCacheInfo = pathCacheDataEntry.getInfo(new OnDataChainRunnable<PathCacheInfoItem, PathCacheInfoItemDao, Object>() {
-//            @Override
-//            public PathCacheInfoItem run(PathCacheInfoItemDao pathCacheInfoItemDao) {
-//                QueryBuilder<PathCacheInfoItem> builder = pathCacheInfoItemDao.queryBuilder();
-//                builder.where(PathCacheInfoItemDao.Properties.Url.eq(originalUrl));
-//                PathCacheInfoItem unique = builder.unique();
-//                return unique;
-//            }
-//        });
-//        if (TextUtils.isEmpty(pathCacheInfo.getTargetPath())) {
-//            return null;
-//        }
-//        File file = new File(pathCacheInfo.getTargetPath());
-//        if (!file.exists()) {
-//            return null;
-//        }
-//        return file;
-        return null;
+        PathCacheDataEntry pathCacheDataEntry = new PathCacheDataEntry();
+        PathCacheInfoItem pathCacheInfo = pathCacheDataEntry.getInfo(new OnDataChainRunnable<PathCacheInfoItem, PathCacheInfoItemDao, Object>() {
+            @Override
+            public PathCacheInfoItem run(PathCacheInfoItemDao pathCacheInfoItemDao) {
+                QueryBuilder<PathCacheInfoItem> builder = pathCacheInfoItemDao.queryBuilder();
+                builder.where(PathCacheInfoItemDao.Properties.Url.eq(originalUrl));
+                PathCacheInfoItem unique = builder.unique();
+                return unique;
+            }
+        });
+        if (TextUtils.isEmpty(pathCacheInfo.getTargetPath())) {
+            return null;
+        }
+        File file = new File(pathCacheInfo.getTargetPath());
+        if (!file.exists()) {
+            return null;
+        }
+        return file;
     }
 
     /**
@@ -137,36 +136,36 @@ public class GlideOptimize {
         if (TextUtils.isEmpty(originalUrl)) {
             return;
         }
-//        PathCacheDataEntry pathCacheDataEntry = new PathCacheDataEntry();
-//        PathCacheInfoItem pathCacheInfo = pathCacheDataEntry.getInfo(new OnDataChainRunnable<PathCacheInfoItem, PathCacheInfoItemDao, Object>() {
-//            @Override
-//            public PathCacheInfoItem run(PathCacheInfoItemDao pathCacheInfoItemDao) {
-//                QueryBuilder<PathCacheInfoItem> builder = pathCacheInfoItemDao.queryBuilder();
-//                builder.where(PathCacheInfoItemDao.Properties.Url.eq(originalUrl));
-//                PathCacheInfoItem unique = builder.unique();
-//                return unique;
-//            }
-//        });
-//        if (TextUtils.isEmpty(pathCacheInfo.getTargetPath())) {
-//            return;
-//        }
-//        File file = new File(pathCacheInfo.getTargetPath());
-//        //删除文件
-//        if (file.exists()) {
-//            boolean delete = file.delete();
-//            if (!delete) {
-//                Logger.info("remove file fail.");
-//            }
-//        }
-//        //删除记录信息
-//        pathCacheDataEntry.execute(new OnDataChainRunnable<Void, PathCacheInfoItemDao, Object>() {
-//            @Override
-//            public Void run(PathCacheInfoItemDao pathCacheInfoItemDao) {
-//                QueryBuilder<PathCacheInfoItem> builder = pathCacheInfoItemDao.queryBuilder();
-//                builder.where(PathCacheInfoItemDao.Properties.Url.eq(originalUrl));
-//                builder.buildDelete();
-//                return null;
-//            }
-//        });
+        PathCacheDataEntry pathCacheDataEntry = new PathCacheDataEntry();
+        PathCacheInfoItem pathCacheInfo = pathCacheDataEntry.getInfo(new OnDataChainRunnable<PathCacheInfoItem, PathCacheInfoItemDao, Object>() {
+            @Override
+            public PathCacheInfoItem run(PathCacheInfoItemDao pathCacheInfoItemDao) {
+                QueryBuilder<PathCacheInfoItem> builder = pathCacheInfoItemDao.queryBuilder();
+                builder.where(PathCacheInfoItemDao.Properties.Url.eq(originalUrl));
+                PathCacheInfoItem unique = builder.unique();
+                return unique;
+            }
+        });
+        if (TextUtils.isEmpty(pathCacheInfo.getTargetPath())) {
+            return;
+        }
+        File file = new File(pathCacheInfo.getTargetPath());
+        //删除文件
+        if (file.exists()) {
+            boolean delete = file.delete();
+            if (!delete) {
+                Logger.info("remove file fail.");
+            }
+        }
+        //删除记录信息
+        pathCacheDataEntry.execute(new OnDataChainRunnable<Void, PathCacheInfoItemDao, Object>() {
+            @Override
+            public Void run(PathCacheInfoItemDao pathCacheInfoItemDao) {
+                QueryBuilder<PathCacheInfoItem> builder = pathCacheInfoItemDao.queryBuilder();
+                builder.where(PathCacheInfoItemDao.Properties.Url.eq(originalUrl));
+                builder.buildDelete();
+                return null;
+            }
+        });
     }
 }

@@ -19,9 +19,11 @@
 
             <ImageView
                 android:id="@+id/test_iv0"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal" />
+                android:layout_gravity="center_horizontal"
+                android:background="@color/color_ff0000"
+                android:scaleType="fitCenter" />
 
             <ImageView
                 android:id="@+id/test_iv1"

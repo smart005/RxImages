@@ -285,6 +285,7 @@ public class GlideRequestBuilder {
             width = imageView.getWidth();
             height = imageView.getHeight();
             if (width <= 0 || height <= 0) {
+                String url = optimize.getGlideUrl().getUrl();
                 imageView.post(new ImagePostRunable<T>(imageView, loadType, call));
             } else {
                 this.into(width, height, GlideCallType.view, new RendBuilderAction(call, imageView, loadType));
