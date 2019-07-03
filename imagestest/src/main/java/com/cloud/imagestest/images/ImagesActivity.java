@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.bumptech.glide.Glide;
 import com.bumptech.glide.Priority;
 import com.cloud.images.RxImage;
 import com.cloud.images.beans.SelectImageProperties;
@@ -23,6 +22,7 @@ import com.cloud.objects.manager.ObjectManager;
 import com.cloud.objects.utils.ResUtils;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 /**
@@ -110,7 +110,7 @@ public class ImagesActivity extends FragmentActivity {
         //选择后图片最大压缩大小
         imageSelectDialog.setMaxFileSize(1024);
         //最多选择图片数量
-        imageSelectDialog.setMaxSelectNumber(1);
+        imageSelectDialog.setMaxSelectNumber(6);
         //是否显示拍照选项
         imageSelectDialog.setShowTakingPictures(false);
         //选择后压缩图片最大宽度
@@ -118,13 +118,13 @@ public class ImagesActivity extends FragmentActivity {
         //选择后压缩图片最大高度
         imageSelectDialog.setMaxImageHeight(1920);
         //选择图片后是否进行裁剪处理
-        imageSelectDialog.setTailoring(true);
+        imageSelectDialog.setTailoring(false);
         //设置裁剪最大宽高
         int screenWidth = ObjectManager.getScreenWidth(this) * 2;
         int height = screenWidth * 83 / 345;
-        imageSelectDialog.withMaxSize(screenWidth, height);
+//        imageSelectDialog.withMaxSize(screenWidth, height);
         //设置裁剪宽高比
-        imageSelectDialog.withAspect(345, 83);
+        imageSelectDialog.withAspect(16, 9);
         //显示图片选择
         imageSelectDialog.show(this);
     }
@@ -151,28 +151,40 @@ public class ImagesActivity extends FragmentActivity {
 
     //图片选择+拍照
     public void OnImageSelectTakingClick(View view) {
-        //选择后图片最大压缩大小
-        imageSelectDialog.setMaxFileSize(1024);
-        //最多选择图片数量
-        imageSelectDialog.setMaxSelectNumber(1);
-        //是否显示拍照选项
-        imageSelectDialog.setShowTakingPictures(true);
-        //选择后压缩图片最大宽度
-        imageSelectDialog.setMaxImageWidth(720);
-        //选择后压缩图片最大高度
-        imageSelectDialog.setMaxImageHeight(1920);
-        //选择图片后是否进行裁剪处理
-        imageSelectDialog.setTailoring(true);
-        //设置裁剪最大宽高
-        int screenWidth = ObjectManager.getScreenWidth(this) * 2;
-        int height = screenWidth * 83 / 345;
-        imageSelectDialog.withMaxSize(screenWidth, height);
-        //设置裁剪宽高比
-        imageSelectDialog.withAspect(345, 83);
-        //扩展数据，选择时传入可以回调中取出;
-        imageSelectDialog.setExtra(null);
-        //显示图片选择
-        imageSelectDialog.show(this);
+//        //选择后图片最大压缩大小
+//        imageSelectDialog.setMaxFileSize(1024);
+//        //最多选择图片数量
+//        imageSelectDialog.setMaxSelectNumber(1);
+//        //是否显示拍照选项
+//        imageSelectDialog.setShowTakingPictures(true);
+//        //选择后压缩图片最大宽度
+//        imageSelectDialog.setMaxImageWidth(720);
+//        //选择后压缩图片最大高度
+//        imageSelectDialog.setMaxImageHeight(1920);
+//        //选择图片后是否进行裁剪处理
+//        imageSelectDialog.setTailoring(true);
+//        //设置裁剪最大宽高
+//        int screenWidth = ObjectManager.getScreenWidth(this) * 2;
+//        int height = screenWidth * 83 / 345;
+//        imageSelectDialog.withMaxSize(screenWidth, height);
+//        //设置裁剪宽高比
+//        imageSelectDialog.withAspect(345, 83);
+//        //扩展数据，选择时传入可以回调中取出;
+//        imageSelectDialog.setExtra(null);
+//        //显示图片选择
+//        imageSelectDialog.show(this);
+
+        int screenWidth = ObjectManager.getScreenWidth(this);
+        int screenHeight = ObjectManager.getScreenHeight(this);
+        File file = new File("/storage/emulated/0/cloudapp/images/1111.jpg");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        File srcfile = new File("/storage/emulated/0/Mob/com.changshuo.ui/cache/images/utf-8' '13505285248872121122463103.thumb.jpg");
     }
 
     private ImageSelectDialog imageSelectDialog = new ImageSelectDialog() {

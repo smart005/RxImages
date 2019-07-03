@@ -143,11 +143,9 @@ public class MultiImageSelectorFragment extends Fragment {
         mCategoryText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
                 if (mFolderPopupWindow == null) {
                     createPopupFolderList();
                 }
-
                 if (mFolderPopupWindow.isShowing()) {
                     mFolderPopupWindow.dismiss();
                 } else {
@@ -177,22 +175,6 @@ public class MultiImageSelectorFragment extends Fragment {
                 }
             }
         });
-        mGridView.setOnScrollListener(new AbsListView.OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(AbsListView view, int scrollState) {
-                if (scrollState == SCROLL_STATE_FLING) {
-                    Glide.with(view.getContext()).pauseRequests();
-                } else {
-                    Glide.with(view.getContext()).resumeRequests();
-                }
-            }
-
-            @Override
-            public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
-
-            }
-        });
-
         mFolderAdapter = new FolderAdapter(getActivity());
     }
 

@@ -13,8 +13,14 @@
             android:layout_width="match_parent"
             android:layout_height="46dp"
             android:background="#ffffff"
-            app:ttv_leftViewText="&#xe612;"
+            app:ttv_backgroundColor="@color/color_041d29"
+            app:ttv_bottomLineColor="@color/color_041d29"
+            app:ttv_isShowBottomLine="true"
+            app:ttv_leftViewText="取消"
+            app:ttv_leftViewTextColor="@color/color_ffffff"
+            app:ttv_leftViewTextSize="@dimen/font_size_16"
             app:ttv_rightViewText="完成(0/9)"
+            app:ttv_rightViewTextColor="@color/color_ffffff"
             app:ttv_titleSize="16sp" />
 
         <FrameLayout

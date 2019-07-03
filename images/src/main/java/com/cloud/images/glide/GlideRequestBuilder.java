@@ -285,7 +285,6 @@ public class GlideRequestBuilder {
             width = imageView.getWidth();
             height = imageView.getHeight();
             if (width <= 0 || height <= 0) {
-                String url = optimize.getGlideUrl().getUrl();
                 imageView.post(new ImagePostRunable<T>(imageView, loadType, call));
             } else {
                 this.into(width, height, GlideCallType.view, new RendBuilderAction(call, imageView, loadType));
@@ -359,7 +358,7 @@ public class GlideRequestBuilder {
                 RequestBuilder<Bitmap> requestBuilder = manager.asBitmap();
                 if (glideUrl != null) {
                     glideUrl.setProperties(properties);
-                    call.call(properties, requestBuilder.load(glideUrl.getUrl()), "");
+                    call.call(properties, requestBuilder.load(glideUrl.getUrl()), glideUrl.getOriginalUrl());
                 } else if (optimize.getFileImage() != null) {
                     call.call(properties, requestBuilder.load(optimize.getFileImage()), "");
                 } else if (optimize.getResImage() != 0) {
@@ -371,7 +370,7 @@ public class GlideRequestBuilder {
                 RequestBuilder<File> requestBuilder = manager.asFile();
                 if (glideUrl != null) {
                     glideUrl.setProperties(properties);
-                    call.call(properties, requestBuilder.load(glideUrl.getUrl()), "");
+                    call.call(properties, requestBuilder.load(glideUrl.getUrl()), glideUrl.getOriginalUrl());
                 } else if (optimize.getFileImage() != null) {
                     call.call(properties, requestBuilder.load(optimize.getFileImage()), "");
                 } else if (optimize.getResImage() != 0) {
@@ -380,6 +379,9 @@ public class GlideRequestBuilder {
                     call.call(properties, requestBuilder.load(optimize.getUriImage()), "");
                 }
             } else {
+                if (glideUrl == null) {
+                    return;
+                }
                 if (optimize.isGif()) {
                     //如果是gif则加asGif
                     RequestBuilder<GifDrawable> requestBuilder = manager.asGif();
@@ -514,11 +516,12 @@ public class GlideRequestBuilder {
             //原url
             String originalUrl = String.valueOf(params[1]);
             if (TextUtils.isEmpty(originalUrl)) {
-                return null;
+                //如果原地址为空则不作移动
+                return file;
             }
             //移动文件至目标目录
             File targetDir = DirectoryUtils.getInstance().getDirectory(optimize.getMoveDirectoryName());
-            String fileName = String.format("%s.%s", GlobalUtils.getGuidNoConnect(), GlobalUtils.getSuffixName(file.getName()));
+            String fileName = String.format("%s.jpg", GlobalUtils.getGuidNoConnect());
             File targetFile = new File(targetDir, fileName);
             StorageUtils.copyFile(file, targetFile);
             //移动成功后file-originalUrl-targetFile关联

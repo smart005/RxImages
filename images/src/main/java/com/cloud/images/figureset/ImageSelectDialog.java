@@ -8,12 +8,15 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
+import android.provider.MediaStore;
 import android.text.TextUtils;
 
+import com.cloud.ebus.EBus;
+import com.cloud.ebus.SubscribeEBus;
 import com.cloud.images.MultiImageSelector;
 import com.cloud.images.MultiImageSelectorActivity;
 import com.cloud.images.R;
@@ -21,7 +24,7 @@ import com.cloud.images.RxImage;
 import com.cloud.images.beans.SelectImageProperties;
 import com.cloud.images.compress.Luban;
 import com.cloud.images.compress.OnMultiCompressListener;
-import com.cloud.images.cropimage.Crop;
+import com.cloud.images.crop.CropImageActivity;
 import com.cloud.objects.ObjectJudge;
 import com.cloud.objects.logs.Logger;
 import com.cloud.objects.utils.GlobalUtils;
@@ -242,15 +245,16 @@ public class ImageSelectDialog {
      *
      * @param activity 当前窗口
      */
-    public void show(FragmentActivity activity) {
+    public void show(Activity activity) {
         this.activity = activity;
         imagePaths.clear();
+        EBus.getInstance().registered(this, "rx_image_select_bus");
         if (isTailoring && maxSelectNumber == 1) {
             MultiImageSelector multiImageSelector = initShow(activity);
-            multiImageSelector.start(activity, TAILORING_REQUEST_CODE);
+            multiImageSelector.start(activity, TAILORING_REQUEST_CODE, isTailoring);
         } else {
             MultiImageSelector multiImageSelector = initShow(activity);
-            multiImageSelector.start(activity, REQUEST_IMAGE);
+            multiImageSelector.start(activity, REQUEST_IMAGE, isTailoring);
         }
     }
 
@@ -261,6 +265,7 @@ public class ImageSelectDialog {
      */
     public void showTaking(Activity activity) {
         this.activity = activity;
+        EBus.getInstance().registered(this, "rx_image_select_bus");
         startTaking(activity);
     }
 
@@ -304,15 +309,35 @@ public class ImageSelectDialog {
      */
     public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
         try {
+            if (data == null) {
+                return;
+            }
+            if (this.activity == null) {
+                this.activity = activity;
+            }
             if (requestCode == REQUEST_IMAGE) {
                 requestImage(activity, resultCode, data);
             } else if (requestCode == TAILORING_REQUEST_CODE) {
                 tailoringRequestCode(activity, data);
-            } else if (requestCode == Crop.REQUEST_CROP) {
-                requestCrop(data);
             } else if (requestCode == ONLY_TAKING_RESULT_CODE) {
                 onlyTakingResultProcess(activity, resultCode);
             }
+        } catch (Exception e) {
+            mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
+            Logger.error(e);
+        }
+    }
+
+    @SubscribeEBus(receiveKey = "$_tailoring_request_complete")
+    public void onEventTailoringResult(Intent data) {
+        requestCrop(data);
+    }
+
+    //选择相册后且裁剪时回调此方法不关闭图片选择页面
+    @SubscribeEBus(receiveKey = "$_image_sel_tailoring_bus")
+    public void onEventImageSelectForCrop(Intent data) {
+        try {
+            tailoringRequestCode(activity, data);
         } catch (Exception e) {
             mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
             Logger.error(e);
@@ -347,10 +372,8 @@ public class ImageSelectDialog {
                                         if (isTailoring && maxSelectNumber == 1) {
                                             RxImage.ImagesBuilder builder = RxImage.getInstance().getBuilder();
                                             File dir = builder.getImageCacheDir();
-                                            File destination = new File(dir, String.format("%s.rxtiny", GlobalUtils.getNewGuid()));
-                                            Crop crop = Crop.of(Uri.fromFile(file), Uri.fromFile(destination));
-                                            setCropProperties(crop);
-                                            crop.start(activity);
+                                            File destination = new File(dir, String.format("%s.jpg", GlobalUtils.getNewGuid()));
+                                            startCropActivity(activity, Uri.fromFile(file), Uri.fromFile(destination));
                                         } else {
                                             SelectImageProperties selectImageProperties = new SelectImageProperties();
                                             selectImageProperties.setImagePath(file.getAbsolutePath());
@@ -390,7 +413,7 @@ public class ImageSelectDialog {
                 return;
             }
             List<String> paths = new LinkedList<String>();
-            if (Build.VERSION.SDK_INT >= 5.0) {
+            if (Build.VERSION.SDK_INT >= 21) {
                 String dataString = data.getDataString();
                 if (TextUtils.isEmpty(dataString)) {
                     ClipData clipData = data.getClipData();
@@ -498,10 +521,8 @@ public class ImageSelectDialog {
                                     imagePaths.add(selectImageProperties);
                                     RxImage.ImagesBuilder builder = RxImage.getInstance().getBuilder();
                                     File dir = builder.getImageCacheDir();
-                                    File destination = new File(dir, String.format("%s.rxtiny", GlobalUtils.getNewGuid()));
-                                    Crop crop = Crop.of(Uri.fromFile(file), Uri.fromFile(destination));
-                                    setCropProperties(crop);
-                                    crop.start(activity);
+                                    File destination = new File(dir, String.format("%s.jpg", GlobalUtils.getNewGuid()));
+                                    startCropActivity(activity, Uri.fromFile(file), Uri.fromFile(destination));
                                 } catch (Exception e) {
                                     Logger.error(e);
                                 }
@@ -518,15 +539,23 @@ public class ImageSelectDialog {
         }
     }
 
-    private void setCropProperties(Crop crop) {
-        if (ASPECT_X > 0 && ASPECT_Y > 0) {
-            crop = crop.withAspect(ASPECT_X, ASPECT_Y);
-        } else {
-            crop = crop.asSquare();
-        }
-        if (MAX_X > 0 && MAX_Y > 0) {
-            crop.withMaxSize(MAX_X, MAX_Y);
-        }
+    private void startCropActivity(Activity activity, Uri srcImg, Uri destination) {
+//        if (ASPECT_X > 0 && ASPECT_Y > 0) {
+//            crop = crop.withAspect(ASPECT_X, ASPECT_Y);
+//        } else {
+//            crop = crop.asSquare();
+//        }
+//        if (MAX_X > 0 && MAX_Y > 0) {
+//            crop.withMaxSize(MAX_X, MAX_Y);
+//        }
+        Intent intent = new Intent();
+        intent.setClass(activity, CropImageActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString("srcImg", srcImg.getPath());
+        bundle.putString("destination", destination.getPath());
+        bundle.putBoolean("isTailoring", isTailoring);
+        intent.putExtras(bundle);
+        activity.startActivity(intent);
     }
 
     private void requestCrop(Intent data) {
@@ -548,7 +577,7 @@ public class ImageSelectDialog {
     private File getCropImageFile(Intent data) {
         ArrayList<String> paths = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
         if (ObjectJudge.isNullOrEmpty(paths)) {
-            Uri uri = Crop.getOutput(data);
+            Uri uri = data.getParcelableExtra(MediaStore.EXTRA_OUTPUT);
             if (uri == null || uri == Uri.EMPTY) {
                 return null;
             }
@@ -606,6 +635,7 @@ public class ImageSelectDialog {
         @Override
         public void handleMessage(Message msg) {
             if (msg.what == PROCESS_COMPLETED_WITH) {
+                EBus.getInstance().unregister(this, "rx_image_select_bus");
                 List<SelectImageProperties> selectImageProperties = (List<SelectImageProperties>) msg.obj;
                 onSelectCompleted(selectImageProperties, extra);
                 //初始化相关变量

@@ -1,7 +1,6 @@
 package com.cloud.images.adapter;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,12 +8,10 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.cloud.images.R;
 import com.cloud.images.beans.Folder;
+import com.cloud.images.enums.ScaleType;
+import com.cloud.images.glide.GlideOptimize;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -90,18 +87,12 @@ public class FolderAdapter extends BaseAdapter {
                 if (mFolders.size() > 0) {
                     Folder f = mFolders.get(0);
                     if (f != null) {
-                        RequestOptions options = new RequestOptions()
-                                .autoClone()
-                                .dontAnimate()
-                                .error(R.drawable.cl_mis_default_error)
-                                .skipMemoryCache(true)
-                                .timeout(1000)
-                                .centerCrop()
-                                .diskCacheStrategy(DiskCacheStrategy.ALL);
-                        RequestBuilder<Drawable> load = Glide.with(mContext).applyDefaultRequestOptions(options)
-                                .load(new File(f.cover.path));
-                        load.preload(R.dimen.mis_folder_cover_size, R.dimen.mis_folder_cover_size);
-                        load.into(holder.cover);
+                        File file = new File(f.cover.path);
+                        GlideOptimize.with(mContext)
+                                .load(file)
+                                .setPlaceholder(R.drawable.cl_mis_default_error)
+                                .setScaleType(ScaleType.centerCrop)
+                                .into(holder.cover);
                     } else {
                         holder.cover.setImageResource(R.drawable.cl_mis_default_error);
                     }
@@ -167,18 +158,12 @@ public class FolderAdapter extends BaseAdapter {
                 size.setText("*" + mContext.getResources().getString(R.string.mis_photo_unit));
             }
             if (data.cover != null) {
-                RequestOptions options = new RequestOptions()
-                        .autoClone()
-                        .dontAnimate()
-                        .placeholder(R.drawable.cl_mis_default_error)
-                        .skipMemoryCache(true)
-                        .timeout(1000)
-                        .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
-                RequestBuilder<Drawable> load = Glide.with(mContext).applyDefaultRequestOptions(options)
-                        .load(new File(data.cover.path));
-                load.preload(R.dimen.mis_folder_cover_size, R.dimen.mis_folder_cover_size);
-                load.into(cover);
+                File file = new File(data.cover.path);
+                GlideOptimize.with(mContext)
+                        .load(file)
+                        .setPlaceholder(R.drawable.cl_mis_default_error)
+                        .setScaleType(ScaleType.centerCrop)
+                        .into(cover);
             } else {
                 cover.setImageResource(R.drawable.cl_mis_default_error);
             }

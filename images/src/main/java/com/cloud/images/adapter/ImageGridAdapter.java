@@ -2,7 +2,6 @@ package com.cloud.images.adapter;
 
 import android.content.Context;
 import android.graphics.Point;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,12 +10,10 @@ import android.view.WindowManager;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
 import com.cloud.images.R;
 import com.cloud.images.beans.ImageItem;
+import com.cloud.images.enums.ScaleType;
+import com.cloud.images.glide.GlideOptimize;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -229,18 +226,11 @@ public class ImageGridAdapter extends BaseAdapter {
             File imageFile = new File(data.path);
             if (imageFile.exists()) {
                 // 显示图片
-                RequestOptions options = new RequestOptions()
-                        .autoClone()
-                        .dontAnimate()
-                        .placeholder(R.drawable.cl_mis_default_error)
-                        .skipMemoryCache(true)
-                        .timeout(1000)
-                        .centerCrop()
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
-                RequestBuilder<Drawable> load = Glide.with(mContext).applyDefaultRequestOptions(options)
-                        .load(imageFile);
-                load.preload(mGridWidth, mGridWidth);
-                load.into(image);
+                GlideOptimize.with(mContext)
+                        .load(imageFile)
+                        .setPlaceholder(R.drawable.cl_mis_default_error)
+                        .setScaleType(ScaleType.centerCrop)
+                        .into(image);
             } else {
                 image.setImageResource(R.drawable.cl_mis_default_error);
             }

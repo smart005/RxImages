@@ -13,9 +13,9 @@
             android:name="com.cloud.images.MultiImageSelectorActivity"
             android:configChanges="orientation|screenSize" />
         <activity
-            android:name="com.cloud.images.cropimage.CropImageActivity"
-            android:launchMode="singleTop"
-            android:screenOrientation="portrait" />
+            android:name="com.cloud.images.crop.CropImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Holo.Light.NoActionBar" />
 
         <meta-data
             android:name="com.cloud.images.glide.GlideConfiguration"

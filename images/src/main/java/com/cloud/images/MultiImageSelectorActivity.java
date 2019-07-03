@@ -13,7 +13,11 @@ import android.view.View;
 
 import com.cloud.coms.events.OnThemeViewClickListener;
 import com.cloud.coms.themes.ActionType;
+import com.cloud.ebus.EBus;
+import com.cloud.ebus.SubscribeEBus;
 import com.cloud.images.databinding.ClMisActivityDefaultBinding;
+import com.cloud.objects.bases.BundleData;
+import com.cloud.objects.utils.GlobalUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -58,6 +62,8 @@ public class MultiImageSelectorActivity extends FragmentActivity
     private ArrayList<String> resultList = new ArrayList<>();
     private int mDefaultCount = DEFAULT_IMAGE_SIZE;
     private ClMisActivityDefaultBinding binding = null;
+    //页面标识
+    private String imageSelectorPageTag = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,11 +100,21 @@ public class MultiImageSelectorActivity extends FragmentActivity
             bundle.putInt(MultiImageSelectorFragment.EXTRA_SELECT_MODE, mode);
             bundle.putBoolean(MultiImageSelectorFragment.EXTRA_SHOW_CAMERA, isShow);
             bundle.putStringArrayList(MultiImageSelectorFragment.EXTRA_DEFAULT_SELECTED_LIST, resultList);
+            BundleData bundleData = new BundleData(getIntent());
+            bundle.putBoolean("isTailoring", bundleData.getBooleanBundle("isTailoring"));
 
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.image_grid, Fragment.instantiate(this, MultiImageSelectorFragment.class.getName(), bundle))
                     .commit();
         }
+        imageSelectorPageTag = GlobalUtils.getNewGuid();
+        EBus.getInstance().registered(this, imageSelectorPageTag);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EBus.getInstance().unregister(this, imageSelectorPageTag);
     }
 
     @Override
@@ -116,6 +132,11 @@ public class MultiImageSelectorActivity extends FragmentActivity
             }
             finish();
         }
+    }
+
+    @SubscribeEBus(receiveKey = "$_close_image_select_page")
+    public void onCloseImageSelector() {
+        finish();
     }
 
     @Override
@@ -148,11 +169,18 @@ public class MultiImageSelectorActivity extends FragmentActivity
 
     @Override
     public void onSingleImageSelected(String path) {
+        resultList.clear();
         Intent data = new Intent();
         resultList.add(path);
         data.putStringArrayListExtra(EXTRA_RESULT, resultList);
-        setResult(RESULT_OK, data);
-        finish();
+        BundleData bundleData = new BundleData(getIntent());
+        boolean isTailoring = bundleData.getBooleanBundle("isTailoring");
+        if (isTailoring) {
+            EBus.getInstance().post("$_image_sel_tailoring_bus", data);
+        } else {
+            setResult(RESULT_OK, data);
+            finish();
+        }
     }
 
     @Override

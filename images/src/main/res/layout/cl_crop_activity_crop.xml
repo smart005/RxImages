@@ -1,19 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <data>
 
-    <include
-        android:id="@+id/done_cancel_bar"
-        layout="@layout/cl_crop_layout_done_cancel"/>
+        <variable
+            name="handler"
+            type="com.cloud.images.crop.CropImageActivity" />
+    </data>
 
-    <com.cloud.images.cropimage.CropImageView
-        android:id="@+id/crop_image"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/done_cancel_bar"
-        android:background="@drawable/cl_black_texture_selector"/>
+        android:background="@color/color_0f0f0f">
 
-</RelativeLayout>
+        <LinearLayout
+            android:id="@+id/done_cancel_bar"
+            style="@style/Crop.DoneCancelBar">
+
+            <FrameLayout
+                style="@style/Crop.ActionButton"
+                android:onClickListener="@{(view)->handler.onCancelClick(view)}">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="取消"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="@dimen/font_size_16" />
+            </FrameLayout>
+
+            <FrameLayout
+                style="@style/Crop.ActionButton"
+                android:onClickListener="@{(view)->handler.onCropClick(view)}">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="完成"
+                    android:textColor="@color/color_ffffff"
+                    android:textSize="@dimen/font_size_16" />
+            </FrameLayout>
+
+        </LinearLayout>
+
+        <com.cloud.images.crop.CropImageView
+            android:id="@+id/crop_image_civ"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/done_cancel_bar"
+            android:padding="@dimen/spacing_4"
+            app:scv_background_color="@color/color_0f0f0f"
+            app:scv_crop_mode="fit_image"
+            app:scv_frame_color="@color/color_ffffff"
+            app:scv_frame_stroke_weight="1dp"
+            app:scv_guide_color="@color/color_ffffff"
+            app:scv_guide_show_mode="show_always"
+            app:scv_guide_stroke_weight="1dp"
+            app:scv_handle_color="@color/color_ffffff"
+            app:scv_handle_show_mode="show_always"
+            app:scv_handle_size="@dimen/spacing_14"
+            app:scv_min_frame_size="@dimen/spacing_48"
+            app:scv_overlay_color="#AA1C1C1C"
+            app:scv_touch_padding="8dp" />
+
+    </RelativeLayout>
+</layout>

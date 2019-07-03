@@ -32,13 +32,4 @@
         <item name="android:textSize">13sp</item>
     </style>
 
-    <style name="Crop.ActionButtonText.Done">
-        <item name="android:drawableLeft">@drawable/cl_crop_ic_done</item>
-        <item name="android:text">@string/crop_done</item>
-    </style>
-
-    <style name="Crop.ActionButtonText.Cancel">
-        <item name="android:drawableLeft">@drawable/cl_crop_ic_cancel</item>
-        <item name="android:text">@string/crop_cancel</item>
-    </style>
 </resources>
