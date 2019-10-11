@@ -263,8 +263,8 @@ abstract class PictureSelectEditorView extends LinearLayout implements OnLinearD
         containerWidth -= (int) a.getDimension(2, 0);
         containerWidth -= (int) a.getDimension(3, 0);
         a.recycle();
-        int splitSize = PixelUtils.dip2px(getContext(), 8);
-        imgSize = (containerWidth - splitSize * (eachRowNumber + 1) - eachRowNumber * PixelUtils.dip2px(getContext(), 7)) / eachRowNumber;
+        int splitSize = PixelUtils.dip2px(8);
+        imgSize = (containerWidth - splitSize * (eachRowNumber + 1) - eachRowNumber * PixelUtils.dip2px(7)) / eachRowNumber;
         RowObjectItem objectItem = buildRow();
         if (isAllowDrager) {
             dragerHashMap.put(objectItem.row.getTag(dragerViewTag), objectItem.drager);
@@ -353,7 +353,7 @@ abstract class PictureSelectEditorView extends LinearLayout implements OnLinearD
     @SuppressLint("ClickableViewAccessibility")
     private RelativeLayout buildItem(int imgSize, boolean isAdd, Uri uri, int imgIndex, final LinearDrager<LinearLayout> drager) {
         LayoutParams rlparam = new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
-        rlparam.setMargins(PixelUtils.dip2px(getContext(), 8), 0, 0, 0);
+        rlparam.setMargins(PixelUtils.dip2px(8), 0, 0, 0);
         if (isAlignMiddle) {
             rlparam.gravity = Gravity.CENTER_HORIZONTAL;
         }
@@ -362,7 +362,7 @@ abstract class PictureSelectEditorView extends LinearLayout implements OnLinearD
         //图片
         RelativeLayout.LayoutParams ivparam = new RelativeLayout.LayoutParams(imgSize, imgSize);
         ivparam.addRule(RelativeLayout.CENTER_VERTICAL);
-        ivparam.setMargins(0, PixelUtils.dip2px(getContext(), 12), 0, PixelUtils.dip2px(getContext(), 12));
+        ivparam.setMargins(0, PixelUtils.dip2px(12), 0, PixelUtils.dip2px(12));
         final ImageView imageView = new ImageView(getContext());
         imageView.setLayoutParams(ivparam);
         imageView.setId(IMAGE_ITEM_IV);
@@ -438,12 +438,12 @@ abstract class PictureSelectEditorView extends LinearLayout implements OnLinearD
             relativeLayout.addView(getProgressView(imgIndex));
         }
         //删除图标
-        int delimgsize = PixelUtils.dip2px(getContext(), 16);
+        int delimgsize = PixelUtils.dip2px(16);
         RelativeLayout.LayoutParams delparam = new RelativeLayout.LayoutParams(delimgsize, delimgsize);
         delparam.addRule(RelativeLayout.ALIGN_TOP, IMAGE_ITEM_IV);
         delparam.addRule(RelativeLayout.RIGHT_OF, IMAGE_ITEM_IV);
-        int left = PixelUtils.dip2px(getContext(), -10);
-        int top = PixelUtils.dip2px(getContext(), -8);
+        int left = PixelUtils.dip2px(-10);
+        int top = PixelUtils.dip2px(-8);
         delparam.setMargins(left + delImageMarginLeft, top + delImageMarginTop, 0, 0);
         ImageView del = new ImageView(getContext());
         del.setId(DEL_ID);

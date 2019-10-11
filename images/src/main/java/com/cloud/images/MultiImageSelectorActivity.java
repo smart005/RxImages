@@ -118,7 +118,7 @@ public class MultiImageSelectorActivity extends FragmentActivity
     }
 
     @Override
-    public void onThemeViewClick(View view, int id, ActionType actionType) {
+    public void onThemeViewClick(View view, int id, ActionType actionType, String iconTag) {
         if (actionType == ActionType.leftView) {
             finish();
         } else if (actionType == ActionType.rightView) {

@@ -27,6 +27,7 @@ import com.cloud.images.compress.OnMultiCompressListener;
 import com.cloud.images.crop.CropImageActivity;
 import com.cloud.objects.ObjectJudge;
 import com.cloud.objects.logs.Logger;
+import com.cloud.objects.storage.UriFileUtils;
 import com.cloud.objects.utils.GlobalUtils;
 import com.cloud.toasty.ToastUtils;
 
@@ -99,6 +100,10 @@ public class ImageSelectDialog {
     private Object extra = null;
 
     private File takingFile = null;
+    /**
+     * 是否选择原图(默认true)
+     */
+    private boolean isOriginalImage = true;
 
     private void init() {
         isTailoring = false;
@@ -226,6 +231,15 @@ public class ImageSelectDialog {
         this.MAX_Y = height;
     }
 
+    /**
+     * 设置是否选择原图
+     *
+     * @param originalImage true-原图,反之false;
+     */
+    public void setOriginalImage(boolean originalImage) {
+        isOriginalImage = originalImage;
+    }
+
     private MultiImageSelector initShow(Context context) {
         MultiImageSelector multiImageSelector = MultiImageSelector.create(context).showCamera(isShowTakingPictures);
         if (maxSelectNumber > 1) {
@@ -291,7 +305,8 @@ public class ImageSelectDialog {
             if (takingFile == null) {
                 ToastUtils.show(R.string.mis_error_image_not_exist);
             } else {
-                intent.putExtra("output", Uri.fromFile(takingFile));
+                Uri uri = UriFileUtils.getInstance().getUri(activity, takingFile);
+                intent.putExtra("output", uri);
                 activity.startActivityForResult(intent, ONLY_TAKING_RESULT_CODE);
             }
         } else {
@@ -347,58 +362,67 @@ public class ImageSelectDialog {
     private void onlyTakingResultProcess(final Activity activity, int resultCode) {
         if (resultCode == activity.RESULT_OK) {
             if (this.takingFile != null) {
-                List<File> imgPaths = new ArrayList<File>();
-                imgPaths.add(takingFile);
-                Luban.compress(imgPaths)
-                        .putGear(Luban.CUSTOM_GEAR)
-                        .setMaxSize(maxFileSize)
-                        .setMaxWidth(maxImageWidth)
-                        .setMaxHeight(maxImageHeight)
-                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                        .launch(new OnMultiCompressListener() {
-                            @Override
-                            public void onStart() {
-                                imagePaths.clear();
-                            }
+                if (isOriginalImage) {
+                    //原图返回
+                    SelectImageProperties selectImageProperties = new SelectImageProperties();
+                    selectImageProperties.setImagePath(takingFile.getAbsolutePath());
+                    selectImageProperties.setImageFileName(takingFile.getName());
+                    imagePaths.add(selectImageProperties);
+                    mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
+                } else {
+                    List<File> imgPaths = new ArrayList<File>();
+                    imgPaths.add(takingFile);
+                    Luban.compress(imgPaths)
+                            .putGear(Luban.CUSTOM_GEAR)
+                            .setMaxSize(maxFileSize)
+                            .setMaxWidth(maxImageWidth)
+                            .setMaxHeight(maxImageHeight)
+                            .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                            .launch(new OnMultiCompressListener() {
+                                @Override
+                                public void onStart() {
+                                    imagePaths.clear();
+                                }
 
-                            @Override
-                            public void onSuccess(List<File> list) {
-                                try {
-                                    if (ObjectJudge.isNullOrEmpty(list)) {
-                                        mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
-                                    } else {
-                                        File file = list.get(0);
-                                        //判断是否裁剪
-                                        if (isTailoring && maxSelectNumber == 1) {
-                                            RxImage.ImagesBuilder builder = RxImage.getInstance().getBuilder();
-                                            File dir = builder.getImageCacheDir();
-                                            File destination = new File(dir, String.format("%s.jpg", GlobalUtils.getNewGuid()));
-                                            startCropActivity(activity, Uri.fromFile(file), Uri.fromFile(destination));
+                                @Override
+                                public void onSuccess(List<File> list) {
+                                    try {
+                                        if (ObjectJudge.isNullOrEmpty(list)) {
+                                            mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
                                         } else {
-                                            SelectImageProperties selectImageProperties = new SelectImageProperties();
-                                            selectImageProperties.setImagePath(file.getAbsolutePath());
-                                            selectImageProperties.setImageFileName(file.getName());
-                                            imagePaths.add(selectImageProperties);
-                                            mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
+                                            File file = list.get(0);
+                                            //判断是否裁剪
+                                            if (isTailoring && maxSelectNumber == 1) {
+                                                RxImage.ImagesBuilder builder = RxImage.getInstance().getBuilder();
+                                                File dir = builder.getImageCacheDir();
+                                                File destination = new File(dir, String.format("%s.jpg", GlobalUtils.getNewGuid()));
+                                                startCropActivity(activity, Uri.fromFile(file), Uri.fromFile(destination));
+                                            } else {
+                                                SelectImageProperties selectImageProperties = new SelectImageProperties();
+                                                selectImageProperties.setImagePath(file.getAbsolutePath());
+                                                selectImageProperties.setImageFileName(file.getName());
+                                                imagePaths.add(selectImageProperties);
+                                                mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
+                                            }
                                         }
+                                    } catch (Exception e) {
+                                        if (takingFile != null && takingFile.exists()) {
+                                            takingFile.delete();
+                                        }
+                                        mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
+                                        Logger.error(e);
                                     }
-                                } catch (Exception e) {
+                                }
+
+                                @Override
+                                public void onError(Throwable throwable) {
                                     if (takingFile != null && takingFile.exists()) {
                                         takingFile.delete();
                                     }
                                     mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
-                                    Logger.error(e);
                                 }
-                            }
-
-                            @Override
-                            public void onError(Throwable throwable) {
-                                if (takingFile != null && takingFile.exists()) {
-                                    takingFile.delete();
-                                }
-                                mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
-                            }
-                        });
+                            });
+                }
             }
         } else {
             if (takingFile != null && takingFile.exists()) {
@@ -437,53 +461,64 @@ public class ImageSelectDialog {
             if (ObjectJudge.isNullOrEmpty(paths)) {
                 mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
             } else {
-                final List<File> imgPaths = new ArrayList<File>();
-                for (String path : paths) {
-                    imgPaths.add(new File(path));
-                }
-                Luban.compress(imgPaths)
-                        .putGear(Luban.CUSTOM_GEAR)
-                        .setMaxSize(maxFileSize)
-                        .setMaxWidth(maxImageWidth)
-                        .setMaxHeight(maxImageHeight)
-                        .setCompressFormat(Bitmap.CompressFormat.JPEG)
-                        .launch(new OnMultiCompressListener() {
-                            @Override
-                            public void onStart() {
-                                imagePaths.clear();
-                            }
+                if (isOriginalImage) {
+                    for (String path : paths) {
+                        File file = new File(path);
+                        SelectImageProperties selectImageProperties = new SelectImageProperties();
+                        selectImageProperties.setImagePath(file.getAbsolutePath());
+                        selectImageProperties.setImageFileName(file.getName());
+                        imagePaths.add(selectImageProperties);
+                    }
+                    mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
+                } else {
+                    final List<File> imgPaths = new ArrayList<File>();
+                    for (String path : paths) {
+                        imgPaths.add(new File(path));
+                    }
+                    Luban.compress(imgPaths)
+                            .putGear(Luban.CUSTOM_GEAR)
+                            .setMaxSize(maxFileSize)
+                            .setMaxWidth(maxImageWidth)
+                            .setMaxHeight(maxImageHeight)
+                            .setCompressFormat(Bitmap.CompressFormat.JPEG)
+                            .launch(new OnMultiCompressListener() {
+                                @Override
+                                public void onStart() {
+                                    imagePaths.clear();
+                                }
 
-                            @Override
-                            public void onSuccess(List<File> list) {
-                                try {
-                                    if (ObjectJudge.isNullOrEmpty(list)) {
-                                        mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
-                                    } else {
-                                        for (File file : list) {
-                                            SelectImageProperties selectImageProperties = new SelectImageProperties();
-                                            selectImageProperties.setImagePath(file.getAbsolutePath());
-                                            selectImageProperties.setImageFileName(file.getName());
-                                            imagePaths.add(selectImageProperties);
+                                @Override
+                                public void onSuccess(List<File> list) {
+                                    try {
+                                        if (ObjectJudge.isNullOrEmpty(list)) {
+                                            mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
+                                        } else {
+                                            for (File file : list) {
+                                                SelectImageProperties selectImageProperties = new SelectImageProperties();
+                                                selectImageProperties.setImagePath(file.getAbsolutePath());
+                                                selectImageProperties.setImageFileName(file.getName());
+                                                imagePaths.add(selectImageProperties);
+                                            }
+                                            mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
                                         }
-                                        mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
+                                    } catch (Exception e) {
+                                        mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
+                                        Logger.error(e);
                                     }
-                                } catch (Exception e) {
-                                    mhandler.obtainMessage(PROCESS_COMPLETED_WITH, null).sendToTarget();
-                                    Logger.error(e);
                                 }
-                            }
 
-                            @Override
-                            public void onError(Throwable throwable) {
-                                for (File imgPath : imgPaths) {
-                                    SelectImageProperties selectImageProperties = new SelectImageProperties();
-                                    selectImageProperties.setImagePath(imgPath.getAbsolutePath());
-                                    selectImageProperties.setImageFileName(imgPath.getName());
-                                    imagePaths.add(selectImageProperties);
+                                @Override
+                                public void onError(Throwable throwable) {
+                                    for (File imgPath : imgPaths) {
+                                        SelectImageProperties selectImageProperties = new SelectImageProperties();
+                                        selectImageProperties.setImagePath(imgPath.getAbsolutePath());
+                                        selectImageProperties.setImageFileName(imgPath.getName());
+                                        imagePaths.add(selectImageProperties);
+                                    }
+                                    mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
                                 }
-                                mhandler.obtainMessage(PROCESS_COMPLETED_WITH, imagePaths).sendToTarget();
-                            }
-                        });
+                            });
+                }
             }
         }
     }

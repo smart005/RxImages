@@ -1,5 +1,7 @@
 package com.cloud.images.glide;
 
+import android.text.TextUtils;
+
 import com.cloud.images.RxImage;
 import com.cloud.images.enums.GlideRequestType;
 
@@ -37,14 +39,19 @@ public class CusGlideUrl {
                 properties.getImageType() == GlideRequestType.fileImage ||
                 properties.getImageType() == GlideRequestType.resImage ||
                 properties.getImageType() == GlideRequestType.uriImage) {
-            return url;
+            return this.url;
         }
         RxImage.ImagesBuilder builder = RxImage.getInstance().getBuilder();
         OnImageUrlCombinationListener combinationListener = builder.getOnImageUrlCombinationListener();
-        if (properties.getWidth() > 0 && properties.getHeight() > 0) {
-            return combinationListener.onUrlCombination(url, properties);
+        if (combinationListener != null && properties.getWidth() > 0 && properties.getHeight() > 0) {
+            String url = combinationListener.onUrlCombination(this.url, properties);
+            if (TextUtils.isEmpty(url)) {
+                return this.url;
+            } else {
+                return url;
+            }
         } else {
-            return url;
+            return this.url;
         }
     }
 }

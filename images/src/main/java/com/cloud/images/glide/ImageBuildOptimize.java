@@ -388,11 +388,15 @@ class ImageBuildOptimize {
          */
         RequestOptions options = new RequestOptions();
         options.placeholder(this.placeholder)
+                .autoClone()
+                .dontAnimate()
                 .priority(priority)
                 //请求超时时间
-                .timeout(3000)
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-        ;
+                .timeout(1000)
+                .error(this.placeholder)
+                .skipMemoryCache(false)
+                .diskCacheStrategy(DiskCacheStrategy.ALL);
+
         if (scaleType == ScaleType.centerCrop) {
             options = options.centerCrop();
         } else if (scaleType == ScaleType.centerInside) {

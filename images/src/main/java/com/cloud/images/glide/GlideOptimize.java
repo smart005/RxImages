@@ -168,4 +168,58 @@ public class GlideOptimize {
             }
         });
     }
+
+    /**
+     * 恢复图片请求
+     *
+     * @param context context
+     */
+    public static void resumeRequests(Context context) {
+        Glide.with(context).resumeRequests();
+    }
+
+    /**
+     * 恢复图片请求
+     *
+     * @param activity activity
+     */
+    public static void resumeRequests(Activity activity) {
+        Glide.with(activity).resumeRequests();
+    }
+
+    /**
+     * 恢复图片请求
+     *
+     * @param fragment fragment
+     */
+    public static void resumeRequests(Fragment fragment) {
+        Glide.with(fragment).resumeRequests();
+    }
+
+    /**
+     * 暂停图片请求
+     *
+     * @param context context
+     */
+    public static void pauseRequests(Context context) {
+        Glide.with(context).pauseRequests();
+    }
+
+    /**
+     * 暂停图片请求
+     *
+     * @param activity activity
+     */
+    public static void pauseRequests(Activity activity) {
+        Glide.with(activity).pauseRequests();
+    }
+
+    /**
+     * 暂停图片请求
+     *
+     * @param fragment fragment
+     */
+    public static void pauseRequests(Fragment fragment) {
+        Glide.with(fragment).pauseRequests();
+    }
 }

@@ -2,7 +2,6 @@ package com.cloud.imagestest.images;
 
 import android.content.Intent;
 import android.databinding.DataBindingUtil;
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
@@ -13,8 +12,6 @@ import com.cloud.images.beans.SelectImageProperties;
 import com.cloud.images.enums.CacheMode;
 import com.cloud.images.enums.ScaleType;
 import com.cloud.images.figureset.ImageSelectDialog;
-import com.cloud.images.glide.GBitmapCallback;
-import com.cloud.images.glide.GFileCallback;
 import com.cloud.images.glide.GlideOptimize;
 import com.cloud.imagestest.R;
 import com.cloud.imagestest.databinding.ImagesViewBinding;
@@ -55,7 +52,7 @@ public class ImagesActivity extends FragmentActivity {
         File file = new File(dir, "test_image.jpg");
         String uri = ResUtils.getResourcesUri(this, R.drawable.timg);
         GlideOptimize.with(this)
-                .load(url3)
+                .load(gifurl)
                 //可自定义宽度和高度，不设置默认取控件的宽高;
 //                .setWidth(100)
 //                .setHeight(200)
@@ -66,43 +63,42 @@ public class ImagesActivity extends FragmentActivity {
                 .setPriority(Priority.HIGH)
                 //true-将图片转为正圆再渲染;false-不作转换处理;
                 //对于网络图片若尺寸或文件大小太大会导致不能转成圆形
-                .setRound(false)
+//                .setRound(false)
                 //先加载相对于原图的缩放比例(按宽高比)的缩略图
-                .setThumbnailScale(0.5f)
+//                .setThumbnailScale(0.5f)
                 //具体说明看{@link ScaleType}
                 .setScaleType(ScaleType.fitCenter)
                 //图片圆角弧度(由第三方规则处理)
-                .setRoundCorners(20)
+//                .setRoundCorners(20)
                 //图片规则(根据第三方文档设定,如阿里、七牛)
-                .setImageRule(ImgRuleType.GeometricForWidth.getRule())
+//                .setImageRule(ImgRuleType.GeometricForWidth.getRule())
                 //缓存模式
                 .setCacheMode(CacheMode.onlyMemory)
                 //散列key,适用于请求url不变但图片已更新情况
                 //.setHashKey(GlobalUtils.getNewGuid())
                 //gif图片需要设置此属性
-                //.asGif()
-                .into(binding.testIv0);
-
+                .asGif()
+                .into(binding.testIv1);
         //所有的参数配置与上面一样
-        GlideOptimize.with(this)
-                .load(url2)
-                .into(new GBitmapCallback() {
-                    @Override
-                    public void call(Bitmap bitmap) {
-                        binding.testIv1.setImageBitmap(bitmap);
-                    }
-                });
+//        GlideOptimize.with(this)
+//                .load(url2)
+//                .into(new GBitmapCallback() {
+//                    @Override
+//                    public void call(Bitmap bitmap) {
+//                        binding.testIv1.setImageBitmap(bitmap);
+//                    }
+//                });
         //文件类型
-        GlideOptimize.with(this)
-                .load(url)
-                //将文件移动至此目录下,如果不设置则为glide缓存默认路径
-                .toMove(DirectoryNames.forum.name())
-                .into(new GFileCallback<File>() {
-                    @Override
-                    public void call(File file) {
-                        //这里做移动文件、加载等操作
-                    }
-                });
+//        GlideOptimize.with(this)
+//                .load(url)
+//                //将文件移动至此目录下,如果不设置则为glide缓存默认路径
+//                .toMove(DirectoryNames.forum.name())
+//                .into(new GFileCallback<File>() {
+//                    @Override
+//                    public void call(File file) {
+//                        //这里做移动文件、加载等操作
+//                    }
+//                });
     }
 
     //图片选择
