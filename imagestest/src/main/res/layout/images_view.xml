@@ -25,7 +25,7 @@
                 android:background="@color/color_ff0000"
                 android:scaleType="fitCenter" />
 
-            <ImageView
+            <com.makeramen.roundedimageview.RoundedImageView
                 android:id="@+id/test_iv1"
                 android:layout_width="@dimen/spacing_300"
                 android:layout_height="@dimen/spacing_200"

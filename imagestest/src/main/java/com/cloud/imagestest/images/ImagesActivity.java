@@ -6,13 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
-import com.bumptech.glide.Priority;
+import com.bumptech.glide.Glide;
 import com.cloud.images.RxImage;
 import com.cloud.images.beans.SelectImageProperties;
-import com.cloud.images.enums.CacheMode;
-import com.cloud.images.enums.ScaleType;
 import com.cloud.images.figureset.ImageSelectDialog;
-import com.cloud.images.glide.GlideOptimize;
 import com.cloud.imagestest.R;
 import com.cloud.imagestest.databinding.ImagesViewBinding;
 import com.cloud.objects.manager.ObjectManager;
@@ -51,34 +48,35 @@ public class ImagesActivity extends FragmentActivity {
         File dir = RxImage.getInstance().getBuilder().getImageCacheDir();
         File file = new File(dir, "test_image.jpg");
         String uri = ResUtils.getResourcesUri(this, R.drawable.timg);
-        GlideOptimize.with(this)
-                .load(gifurl)
-                //可自定义宽度和高度，不设置默认取控件的宽高;
-//                .setWidth(100)
-//                .setHeight(200)
-                //glide图片加载完成之前的占位图片
-                //未设置时取RxImage.setDefImage()设置的默认图片
-                //.setPlaceholder(R.drawable.def_image)
-                //图片加载过程中优化级(一般用于比较重要位置或优化要显示的图片)
-                .setPriority(Priority.HIGH)
-                //true-将图片转为正圆再渲染;false-不作转换处理;
-                //对于网络图片若尺寸或文件大小太大会导致不能转成圆形
-//                .setRound(false)
-                //先加载相对于原图的缩放比例(按宽高比)的缩略图
-//                .setThumbnailScale(0.5f)
-                //具体说明看{@link ScaleType}
-                .setScaleType(ScaleType.fitCenter)
-                //图片圆角弧度(由第三方规则处理)
+//        GlideOptimize.with(this)
+//                .load(gifurl)
+//                //可自定义宽度和高度，不设置默认取控件的宽高;
+////                .setWidth(100)
+////                .setHeight(200)
+//                //glide图片加载完成之前的占位图片
+//                //未设置时取RxImage.setDefImage()设置的默认图片
+//                //.setPlaceholder(R.drawable.def_image)
+//                //图片加载过程中优化级(一般用于比较重要位置或优化要显示的图片)
+//                .setPriority(Priority.HIGH)
+//                //true-将图片转为正圆再渲染;false-不作转换处理;
+//                //对于网络图片若尺寸或文件大小太大会导致不能转成圆形
+////                .setRound(false)
+//                //先加载相对于原图的缩放比例(按宽高比)的缩略图
+////                .setThumbnailScale(0.5f)
+//                //具体说明看{@link ScaleType}
+//                .setScaleType(ScaleType.fitCenter)
+//                //图片圆角弧度(由第三方规则处理)
 //                .setRoundCorners(20)
-                //图片规则(根据第三方文档设定,如阿里、七牛)
+//                //图片规则(根据第三方文档设定,如阿里、七牛)
 //                .setImageRule(ImgRuleType.GeometricForWidth.getRule())
-                //缓存模式
-                .setCacheMode(CacheMode.onlyMemory)
-                //散列key,适用于请求url不变但图片已更新情况
-                //.setHashKey(GlobalUtils.getNewGuid())
-                //gif图片需要设置此属性
-                .asGif()
-                .into(binding.testIv1);
+//                //缓存模式
+//                .setCacheMode(CacheMode.onlyMemory)
+//                //散列key,适用于请求url不变但图片已更新情况
+//                //.setHashKey(GlobalUtils.getNewGuid())
+//                //gif图片需要设置此属性
+//                .asGif()
+//                .into(binding.testIv1);
+        Glide.with(this).load(gifurl).into(binding.testIv1);
         //所有的参数配置与上面一样
 //        GlideOptimize.with(this)
 //                .load(url2)

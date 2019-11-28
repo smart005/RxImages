@@ -347,11 +347,13 @@ public class GlideRequestBuilder {
                 }
             } else {
                 CusGlideUrl glideUrl = optimize.getGlideUrl();
+                if (glideUrl != null) {
+                    glideUrl.setProperties(properties);
+                }
                 //初始url拼接相关属性
                 if (callType == GlideCallType.bitmap) {
                     RequestBuilder<Bitmap> requestBuilder = manager.asBitmap();
                     if (glideUrl != null) {
-                        glideUrl.setProperties(properties);
                         call.call(properties, requestBuilder.load(glideUrl.getUrl()), glideUrl.getOriginalUrl());
                     } else if (optimize.getFileImage() != null) {
                         call.call(properties, requestBuilder.load(optimize.getFileImage()), "");
@@ -363,7 +365,6 @@ public class GlideRequestBuilder {
                 } else if (callType == GlideCallType.file) {
                     RequestBuilder<File> requestBuilder = manager.asFile();
                     if (glideUrl != null) {
-                        glideUrl.setProperties(properties);
                         call.call(properties, requestBuilder.load(glideUrl.getUrl()), glideUrl.getOriginalUrl());
                     } else if (optimize.getFileImage() != null) {
                         call.call(properties, requestBuilder.load(optimize.getFileImage()), "");
