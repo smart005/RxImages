@@ -2,9 +2,10 @@ package com.cloud.imagestest;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.View;
+
+import androidx.databinding.DataBindingUtil;
 
 import com.cloud.imagestest.databinding.ActivityMainBinding;
 import com.cloud.imagestest.images.ImagesActivity;

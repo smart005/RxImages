@@ -14,7 +14,8 @@ limitations under the License.*/
 package com.cloud.images.compress;
 
 import android.graphics.Bitmap;
-import android.support.annotation.IntDef;
+
+import androidx.annotation.IntDef;
 
 import com.cloud.images.RxImage;
 

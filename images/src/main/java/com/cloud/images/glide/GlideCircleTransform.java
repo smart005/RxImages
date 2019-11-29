@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.support.annotation.NonNull;
 
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
@@ -45,13 +44,13 @@ public class GlideCircleTransform extends CenterCrop {
     }
 
     @Override
-    protected Bitmap transform(@NonNull BitmapPool pool, @NonNull Bitmap toTransform, int outWidth, int outHeight) {
+    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
         Bitmap transform = super.transform(pool, toTransform, outWidth, outHeight);
         return circleCrop(pool, transform);
     }
 
     @Override
-    public void updateDiskCacheKey(@NonNull MessageDigest messageDigest) {
+    public void updateDiskCacheKey(MessageDigest messageDigest) {
         super.updateDiskCacheKey(messageDigest);
     }
 }

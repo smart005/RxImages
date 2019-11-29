@@ -12,7 +12,6 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.*/
 package com.cloud.images.compress;
-import android.support.annotation.Nullable;
 
 final class Preconditions {
 
@@ -39,7 +38,7 @@ final class Preconditions {
      * @return the non-null reference that was validated
      * @throws NullPointerException if {@code reference} is null
      */
-    static <T> T checkNotNull(T reference, @Nullable Object errorMessage) {
+    static <T> T checkNotNull(T reference, Object errorMessage) {
         if (reference == null) {
             throw new NullPointerException(String.valueOf(errorMessage));
         }

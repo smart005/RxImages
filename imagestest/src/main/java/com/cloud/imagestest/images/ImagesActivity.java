@@ -1,10 +1,11 @@
 package com.cloud.imagestest.images;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
 import android.view.View;
+
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.FragmentActivity;
 
 import com.bumptech.glide.Glide;
 import com.cloud.images.RxImage;

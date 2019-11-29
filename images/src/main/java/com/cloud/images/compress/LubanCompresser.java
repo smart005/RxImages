@@ -4,7 +4,6 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
-import android.support.annotation.NonNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -80,7 +79,7 @@ class LubanCompresser {
         }
     }
 
-    private File thirdCompress(@NonNull File file) throws IOException {
+    private File thirdCompress(File file) throws IOException {
         String thumb = getCacheFilePath();
 
         double size;
@@ -145,7 +144,7 @@ class LubanCompresser {
                 (long) size);
     }
 
-    private File firstCompress(@NonNull File file) throws IOException {
+    private File firstCompress(File file) throws IOException {
         int minSize = 60;
         int longSide = 720;
         int shortSide = 1280;
@@ -186,7 +185,7 @@ class LubanCompresser {
         return compress(filePath, thumbFilePath, width, height, angle, size);
     }
 
-    private File customCompress(@NonNull File file) throws IOException {
+    private File customCompress(File file) throws IOException {
         String thumbFilePath = getCacheFilePath();
         String filePath = file.getAbsolutePath();
 
@@ -285,7 +284,7 @@ class LubanCompresser {
      *
      * @param path path of target image
      */
-    private int getImageSpinAngle(String path)  {
+    private int getImageSpinAngle(String path) {
         int degree = 0;
         ExifInterface exifInterface = null;
         try {
@@ -322,7 +321,7 @@ class LubanCompresser {
      * @param size           the file size of image
      */
     private File compress(String largeImagePath, String thumbFilePath, int width, int height,
-            int angle, long size) throws IOException {
+                          int angle, long size) throws IOException {
         Bitmap thbBitmap = compress(largeImagePath, width, height);
 
         thbBitmap = rotatingImage(angle, thbBitmap);

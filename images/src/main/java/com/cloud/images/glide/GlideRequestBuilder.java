@@ -2,8 +2,6 @@ package com.cloud.images.glide;
 
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -415,7 +413,7 @@ public class GlideRequestBuilder {
                         RequestBuilder<Drawable> transition = builder.transition(DrawableTransitionOptions.with(drawableCrossFadeFactory));
                         transition.into(new DrawableImageViewTarget(imageView) {
                             @Override
-                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            public void onResourceReady(Drawable resource, Transition<? super Drawable> transition) {
                                 super.onResourceReady(resource, transition);
                                 call.call(resource, transition);
                             }
@@ -507,7 +505,7 @@ public class GlideRequestBuilder {
         }
 
         @Override
-        public void onResourceReady(@NonNull T resource, @Nullable Transition<? super T> transition) {
+        public void onResourceReady(T resource, Transition<? super T> transition) {
             if (call == null || renderCount > 0) {
                 return;
             }
@@ -523,7 +521,7 @@ public class GlideRequestBuilder {
         }
 
         @Override
-        public void onLoadCleared(@Nullable Drawable placeholder) {
+        public void onLoadCleared(Drawable placeholder) {
             //占位图加载
         }
     }

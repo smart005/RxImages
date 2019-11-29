@@ -7,10 +7,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
+
+import androidx.fragment.app.FragmentActivity;
 
 import com.cloud.coms.dialogs.LoadingDialog;
 import com.cloud.coms.dialogs.plugs.DialogPlus;
